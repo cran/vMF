@@ -1,19 +1,33 @@
-// [[Rcpp::depends(RcppArmadillo, BH)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 #define NDEBUG 1
-#include <Rcpp.h>
-#include <boost/math/special_functions/bessel.hpp>
 
 using namespace Rcpp;
 using namespace arma;
 using namespace std;
 
-// FOR SAMPLING von Mises Fisher Distribution 
 
-// function computes the W following :
-// Andrew T.A Wood (1994) Simulation of the von mises fisher distribution, 
-// Communications in Statistics - Simulation and Computation
+/*
+ *  Estimate graph parameters Mccormick and Zheng (2015)
+ *  
+ *  To sample from von Mises Fisher Distribution
+ *  We follow Wood, A. T. (1994). Simulation of the von Mises Fisher distribution.
+ *  Communications in statistics-simulation and computation, 23(1), 157-164.
+ *  
+ *  In a first step we built a function rw to compute W; that is, 
+ *  perform steps 0, 1 et 2.
+ *  
+ *  The function needs the sample size "size", lambda as intensity parameter,
+ *  d as dimension p-1 et a Vector W (void) of dimension "size" to save the
+ *  values corresponding to each sampling.
+ *  
+ *  In the Metropolis steps, one zi is draw for each i and for each iteration
+ *  Thus we build a fast version of previous functions for size = 1.
+ *  That allows to avoid the loop over n and is faster.
+ *  This function is not exported because it is used only in the C++ code.
+ */
 
+// rw is a machin function used to sample from vMF distribution
 void rw(const int& size, const double& lambda, const int& d, arma::vec& W){
   // Step 0
   // Algebraically equivalent to
@@ -48,7 +62,7 @@ void rw(const int& size, const double& lambda, const int& d, arma::vec& W){
 // It needs the sample size and theta as intensity parameter x mean directional
 
 // [[Rcpp::export]]
-SEXP cpprvMF(const int& size,const arma::vec& theta){
+arma::mat cpprvMF(const int& size,const arma::vec& theta){
   int p=theta.n_rows;            //hypersphere dimension
   double lambda=norm(theta);     //intensity parameter
   arma::mat X;                         //Output matrix
@@ -86,7 +100,7 @@ SEXP cpprvMF(const int& size,const arma::vec& theta){
     Q=join_rows(Q,mu);
     X=X*Q.t();
   }
-  return wrap(X);
+  return X;
 }
 
 
@@ -94,20 +108,18 @@ SEXP cpprvMF(const int& size,const arma::vec& theta){
 // in von Mises-Fisher distribution
 
 // [[Rcpp::export]]
-
-double cppCpvMF(const int& p, const double& k){
-  if(k==0){ /*If k=0 return 1*/  return 1;}
-  NumericVector temp=gamma(NumericVector::create(p/2.));
-  return pow(k/2.,(p/2.)-1.)/(temp(0)*boost::math::cyl_bessel_i((p/2.)-1.,k));
+double logCpvMFcpp(const int& p, const double& k){
+  if(k==0){ /*If k=0 return 1*/  return 0;}
+  return (p/2.0 - 1.0)*log(k/2.0) - lgammal(p/2.0) - log(R::bessel_i((double) k, p/2.0 - 1, 2)) - k;
 }
 
 // Compute the von Mises-Fisher density
-// [[Rcpp::export]]
 
-SEXP cppdvMF(arma::mat& z, arma::vec& theta){
-  int Nrow=theta.n_rows, Ncol=theta.n_cols;
-  if(Ncol>Nrow){
-    theta=theta.t();                //to be sure that theta is a column
+// [[Rcpp::export]]
+NumericVector dvMFcpp(const arma::mat& z, const arma::vec& theta, const bool& logp = false){
+  NumericVector logdens = wrap(logCpvMFcpp(z.n_cols, norm(theta)) + z*theta);
+  if (logp) {
+    return logdens;
   }
-  return wrap(cppCpvMF(z.n_cols,arma::norm(theta))*exp(z*theta));
+  return exp(logdens);
 }

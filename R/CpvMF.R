@@ -30,5 +30,5 @@
 
 
 CpvMF <- function(p, k){
-  return(cppCpvMF(p,k))
+  return(exp(logCpvMFcpp(p,k)))
 }

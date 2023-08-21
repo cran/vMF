@@ -37,6 +37,6 @@
 
 
 dvMF <- function(z, theta){
-  if(inherits(z, "numeric")) z <- matrix(z,nrow = 1)
-  return(as.vector(cppdvMF(z,theta)))
+  if(inherits(z, "numeric")) z <- matrix(z, nrow = 1)
+  return(as.vector(dvMFcpp(z,theta)))
 }

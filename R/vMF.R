@@ -6,8 +6,6 @@
 #' vMF also computes the density and normalization constant of the von Mises-Fisher distribution. 
 #' 
 #' 
-#' @docType package
-#' @name vMF
 #' @author 
 #' Aristide Houndetoungan <\email{ariel92and@@gmail.com}>
 #'   
@@ -16,4 +14,5 @@
 #' @references 
 #' Hornik, K., & Grun, B. (2014). \pkg{movMF}: An \R package for fitting mixtures of von Mises-Fisher distributions. \emph{Journal of Statistical Software}, 58(10), 1-31. \url{https://epub.wu.ac.at/4893/}.
 #' @useDynLib vMF, .registration = TRUE
+"_PACKAGE"
 NULL

@@ -1,6 +1,6 @@
 ---
 title: "An R Package for Fast Sampling from von Mises Fisher Distribution"
-author: "Elys\u00E9e Aristide Houndetoungan"
+author: "Aristide Houndetoungan"
 date: "`r Sys.Date()`"
 output:
   pdf_document:
@@ -70,7 +70,9 @@ from the left with a matrix where the first $d-1$ columns consist of unitary bas
 the subspace orthogonal to $\boldsymbol{\mu}$ and the last column is equal to $\boldsymbol{\mu}$.
 
 # Comparison of vMF and movMF{-#comp}
-In this section, I compare **vMF** and **[movMF](https://CRAN.R-project.org/package=movMF)**. First, I compare draws from both packages to make sure that they are the same.
+In this section, I compare **vMF** and **[movMF](https://CRAN.R-project.org/package=movMF)**. 
+
+<!--First, I compare draws from both packages to make sure that they are the same.
 
 ```{r comp1, echo = TRUE, eval = TRUE}
 library(vMF)
@@ -99,7 +101,7 @@ xvMF[1:5,]
 xmovMF[1:5,]
 ```
 
-I now compare the performance of both packages.
+I now compare the performance of both packages.-->
 ```{r ex1, echo = TRUE, eval = TRUE}
 library(rbenchmark) 
 

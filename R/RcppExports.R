@@ -5,11 +5,11 @@ cpprvMF <- function(size, theta) {
     .Call(`_vMF_cpprvMF`, size, theta)
 }
 
-cppCpvMF <- function(p, k) {
-    .Call(`_vMF_cppCpvMF`, p, k)
+logCpvMFcpp <- function(p, k) {
+    .Call(`_vMF_logCpvMFcpp`, p, k)
 }
 
-cppdvMF <- function(z, theta) {
-    .Call(`_vMF_cppdvMF`, z, theta)
+dvMFcpp <- function(z, theta, logp = FALSE) {
+    .Call(`_vMF_dvMFcpp`, z, theta, logp)
 }
 
